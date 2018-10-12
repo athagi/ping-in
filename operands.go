@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/goadesign/goa"
-	"goa-adder/app"
+	"ping-in/app"
         "strconv"
 )
 

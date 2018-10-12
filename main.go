@@ -5,7 +5,7 @@ package main
 import (
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
-	"goa-adder/app"
+	"ping-in/app"
 )
 
 func main() {
