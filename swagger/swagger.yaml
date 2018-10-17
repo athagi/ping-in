@@ -35,6 +35,26 @@ paths:
       summary: add operands
       tags:
       - operands
+  /uri/host/{host_name}:
+    get:
+      description: add uri to check endpoint
+      operationId: uri#host
+      parameters:
+      - description: hostname
+        in: path
+        name: host_name
+        required: true
+        type: string
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+      schemes:
+      - http
+      summary: host uri
+      tags:
+      - uri
 produces:
 - application/json
 - application/xml

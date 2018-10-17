@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/athagi/src/ping-in/client"
+	"github.com/athagi/src/ping-in/tool/cli"
 	goaclient "github.com/goadesign/goa/client"
 	"github.com/spf13/cobra"
-	"goa-adder/client"
-	"goa-adder/tool/cli"
 	"net/http"
 	"os"
 	"time"

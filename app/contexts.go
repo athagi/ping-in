@@ -4,8 +4,8 @@
 //
 // Command:
 // $ goagen
-// --design=goa-adder/design
-// --out=$(GOPATH)/src/goa-adder
+// --design=ping-in/design
+// --out=$(GOPATH)/src/github.com/athagi/src/ping-in
 // --version=v1.3.1
 
 package app
@@ -58,6 +58,41 @@ func NewAddOperandsContext(ctx context.Context, r *http.Request, service *goa.Se
 
 // OK sends a HTTP response with status code 200.
 func (ctx *AddOperandsContext) OK(resp []byte) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "text/plain")
+	}
+	ctx.ResponseData.WriteHeader(200)
+	_, err := ctx.ResponseData.Write(resp)
+	return err
+}
+
+// HostURIContext provides the uri host action context.
+type HostURIContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	HostName string
+}
+
+// NewHostURIContext parses the incoming request URL and body, performs validations and creates the
+// context used by the uri controller host action.
+func NewHostURIContext(ctx context.Context, r *http.Request, service *goa.Service) (*HostURIContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := HostURIContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramHostName := req.Params["host_name"]
+	if len(paramHostName) > 0 {
+		rawHostName := paramHostName[0]
+		rctx.HostName = rawHostName
+	}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *HostURIContext) OK(resp []byte) error {
 	if ctx.ResponseData.Header().Get("Content-Type") == "" {
 		ctx.ResponseData.Header().Set("Content-Type", "text/plain")
 	}

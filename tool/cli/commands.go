@@ -4,8 +4,8 @@
 //
 // Command:
 // $ goagen
-// --design=goa-adder/design
-// --out=$(GOPATH)/src/goa-adder
+// --design=ping-in/design
+// --out=$(GOPATH)/src/github.com/athagi/src/ping-in
 // --version=v1.3.1
 
 package cli
@@ -14,12 +14,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/athagi/src/ping-in/client"
 	"github.com/goadesign/goa"
 	goaclient "github.com/goadesign/goa/client"
 	uuid "github.com/goadesign/goa/uuid"
 	"github.com/spf13/cobra"
-	"goa-adder/client"
 	"log"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -33,6 +34,13 @@ type (
 		Left int
 		// Right operand
 		Right       int
+		PrettyPrint bool
+	}
+
+	// HostURICommand is the command line data structure for the host action of uri
+	HostURICommand struct {
+		// hostname
+		HostName    string
 		PrettyPrint bool
 	}
 )
@@ -52,6 +60,20 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	}
 	tmp1.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp1.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "host",
+		Short: `add uri to check endpoint`,
+	}
+	tmp2 := new(HostURICommand)
+	sub = &cobra.Command{
+		Use:   `uri ["/uri/host/HOST_NAME"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
+	}
+	tmp2.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp2.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 }
@@ -235,4 +257,30 @@ func (cmd *AddOperandsCommand) RegisterFlags(cc *cobra.Command, c *client.Client
 	cc.Flags().IntVar(&cmd.Left, "left", left, `Left operand`)
 	var right int
 	cc.Flags().IntVar(&cmd.Right, "right", right, `Right operand`)
+}
+
+// Run makes the HTTP request corresponding to the HostURICommand command.
+func (cmd *HostURICommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = fmt.Sprintf("/uri/host/%v", url.QueryEscape(cmd.HostName))
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.HostURI(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *HostURICommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	var hostName string
+	cc.Flags().StringVar(&cmd.HostName, "host_name", hostName, `hostname`)
 }

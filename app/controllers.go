@@ -4,8 +4,8 @@
 //
 // Command:
 // $ goagen
-// --design=goa-adder/design
-// --out=$(GOPATH)/src/goa-adder
+// --design=ping-in/design
+// --out=$(GOPATH)/src/github.com/athagi/src/ping-in
 // --version=v1.3.1
 
 package app
@@ -56,4 +56,31 @@ func MountOperandsController(service *goa.Service, ctrl OperandsController) {
 	}
 	service.Mux.Handle("GET", "/add/:left/:right", ctrl.MuxHandler("add", h, nil))
 	service.LogInfo("mount", "ctrl", "Operands", "action", "Add", "route", "GET /add/:left/:right")
+}
+
+// URIController is the controller interface for the URI actions.
+type URIController interface {
+	goa.Muxer
+	Host(*HostURIContext) error
+}
+
+// MountURIController "mounts" a URI resource controller on the given service.
+func MountURIController(service *goa.Service, ctrl URIController) {
+	initService(service)
+	var h goa.Handler
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewHostURIContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.Host(rctx)
+	}
+	service.Mux.Handle("GET", "/uri/host/:host_name", ctrl.MuxHandler("host", h, nil))
+	service.LogInfo("mount", "ctrl", "URI", "action", "Host", "route", "GET /uri/host/:host_name")
 }
