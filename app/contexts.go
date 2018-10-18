@@ -5,7 +5,11 @@
 // Command:
 // $ goagen
 // --design=ping-in/design
+<<<<<<< HEAD
 // --out=$(GOPATH)/src/github.com/athagi/src/ping-in
+=======
+// --out=$(GOPATH)\src\github.com\athagi\src\ping-in
+>>>>>>> test
 // --version=v1.3.1
 
 package app
@@ -66,6 +70,7 @@ func (ctx *AddOperandsContext) OK(resp []byte) error {
 	return err
 }
 
+<<<<<<< HEAD
 // HostURIContext provides the uri host action context.
 type HostURIContext struct {
 	context.Context
@@ -77,22 +82,42 @@ type HostURIContext struct {
 // NewHostURIContext parses the incoming request URL and body, performs validations and creates the
 // context used by the uri controller host action.
 func NewHostURIContext(ctx context.Context, r *http.Request, service *goa.Service) (*HostURIContext, error) {
+=======
+// AddTestContext provides the test add action context.
+type AddTestContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+}
+
+// NewAddTestContext parses the incoming request URL and body, performs validations and creates the
+// context used by the test controller add action.
+func NewAddTestContext(ctx context.Context, r *http.Request, service *goa.Service) (*AddTestContext, error) {
+>>>>>>> test
 	var err error
 	resp := goa.ContextResponse(ctx)
 	resp.Service = service
 	req := goa.ContextRequest(ctx)
 	req.Request = r
+<<<<<<< HEAD
 	rctx := HostURIContext{Context: ctx, ResponseData: resp, RequestData: req}
 	paramHostName := req.Params["host_name"]
 	if len(paramHostName) > 0 {
 		rawHostName := paramHostName[0]
 		rctx.HostName = rawHostName
 	}
+=======
+	rctx := AddTestContext{Context: ctx, ResponseData: resp, RequestData: req}
+>>>>>>> test
 	return &rctx, err
 }
 
 // OK sends a HTTP response with status code 200.
+<<<<<<< HEAD
 func (ctx *HostURIContext) OK(resp []byte) error {
+=======
+func (ctx *AddTestContext) OK(resp []byte) error {
+>>>>>>> test
 	if ctx.ResponseData.Header().Get("Content-Type") == "" {
 		ctx.ResponseData.Header().Set("Content-Type", "text/plain")
 	}
