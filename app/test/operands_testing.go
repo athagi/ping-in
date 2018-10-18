@@ -14,14 +14,15 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/athagi/src/ping-in/app"
-	"github.com/goadesign/goa"
-	"github.com/goadesign/goa/goatest"
 	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+
+	"github.com/athagi/src/ping-in/app"
+	"github.com/goadesign/goa"
+	"github.com/goadesign/goa/goatest"
 )
 
 // AddOperandsOK runs the method Add of the given controller with the given parameters.

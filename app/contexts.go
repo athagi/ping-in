@@ -12,9 +12,10 @@ package app
 
 import (
 	"context"
-	"github.com/goadesign/goa"
 	"net/http"
 	"strconv"
+
+	"github.com/goadesign/goa"
 )
 
 // AddOperandsContext provides the operands add action context.
