@@ -5,7 +5,11 @@
 // Command:
 // $ goagen
 // --design=ping-in/design
+<<<<<<< HEAD
 // --out=$(GOPATH)/src/github.com/athagi/src/ping-in
+=======
+// --out=$(GOPATH)\src\github.com\athagi\src\ping-in
+>>>>>>> 43148370a26d650f15d31edbb5a25e362f72f7d6
 // --version=v1.3.1
 
 package app

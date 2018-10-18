@@ -37,12 +37,12 @@ var _ = Resource("test", func() {
 })
 
 var _ = Resource("uri", func() {
-        Action("host", func() {
-                Routing(GET("uri/host/:host_name"))
-                Description("add uri to check endpoint")
-                Params(func() {
-                        Param("host_name", String, "hostname")
-                })
-                Response(OK, "text/plain")
-        })
+	Action("host", func() {
+		Routing(GET("uri/host/:host_name"))
+		Description("add uri to check endpoint")
+		Params(func() {
+			Param("host_name", String, "hostname")
+		})
+		Response(OK, "text/plain")
+	})
 })
