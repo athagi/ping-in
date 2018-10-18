@@ -1,9 +1,10 @@
 package main
 
 import (
+	"strconv"
+
+	"github.com/athagi/src/ping-in/app"
 	"github.com/goadesign/goa"
-	"ping-in/app"
-        "strconv"
 )
 
 // OperandsController implements the operands resource.
@@ -21,8 +22,7 @@ func (c *OperandsController) Add(ctx *app.AddOperandsContext) error {
 	// OperandsController_Add: start_implement
 
 	// Put your logic here
-        sum := ctx.Left + ctx.Right
-        return ctx.OK([]byte(strconv.Itoa(sum)))
-	//return nil
+	sum := ctx.Left + ctx.Right
+	return ctx.OK([]byte(strconv.Itoa(sum)))
 	// OperandsController_Add: end_implement
 }

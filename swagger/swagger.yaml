@@ -35,6 +35,20 @@ paths:
       summary: add operands
       tags:
       - operands
+  /test/:
+    get:
+      description: test function
+      operationId: test#add
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+      schemes:
+      - http
+      summary: add test
+      tags:
+      - test
 produces:
 - application/json
 - application/xml

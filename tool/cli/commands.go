@@ -4,8 +4,8 @@
 //
 // Command:
 // $ goagen
-// --design=goa-adder/design
-// --out=$(GOPATH)/src/goa-adder
+// --design=ping-in/design
+// --out=$(GOPATH)\src\github.com\athagi\src\ping-in
 // --version=v1.3.1
 
 package cli
@@ -14,11 +14,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/athagi/src/ping-in/client"
 	"github.com/goadesign/goa"
 	goaclient "github.com/goadesign/goa/client"
 	uuid "github.com/goadesign/goa/uuid"
 	"github.com/spf13/cobra"
-	"goa-adder/client"
 	"log"
 	"os"
 	"strconv"
@@ -35,6 +35,11 @@ type (
 		Right       int
 		PrettyPrint bool
 	}
+
+	// AddTestCommand is the command line data structure for the add action of test
+	AddTestCommand struct {
+		PrettyPrint bool
+	}
 )
 
 // RegisterCommands registers the resource action CLI commands.
@@ -42,7 +47,7 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	var command, sub *cobra.Command
 	command = &cobra.Command{
 		Use:   "add",
-		Short: `add returns the sum of the left and right parameters in the response body`,
+		Short: `add action`,
 	}
 	tmp1 := new(AddOperandsCommand)
 	sub = &cobra.Command{
@@ -52,6 +57,15 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	}
 	tmp1.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp1.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	tmp2 := new(AddTestCommand)
+	sub = &cobra.Command{
+		Use:   `test ["/test/"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
+	}
+	tmp2.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp2.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 }
@@ -235,4 +249,28 @@ func (cmd *AddOperandsCommand) RegisterFlags(cc *cobra.Command, c *client.Client
 	cc.Flags().IntVar(&cmd.Left, "left", left, `Left operand`)
 	var right int
 	cc.Flags().IntVar(&cmd.Right, "right", right, `Right operand`)
+}
+
+// Run makes the HTTP request corresponding to the AddTestCommand command.
+func (cmd *AddTestCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/test/"
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.AddTest(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *AddTestCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 }

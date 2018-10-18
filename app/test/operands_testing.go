@@ -4,8 +4,8 @@
 //
 // Command:
 // $ goagen
-// --design=goa-adder/design
-// --out=$(GOPATH)/src/goa-adder
+// --design=ping-in/design
+// --out=$(GOPATH)\src\github.com\athagi\src\ping-in
 // --version=v1.3.1
 
 package test
@@ -14,9 +14,9 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/athagi/src/ping-in/app"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/goatest"
-	"goa-adder/app"
 	"io"
 	"log"
 	"net/http"

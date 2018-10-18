@@ -4,8 +4,8 @@
 //
 // Command:
 // $ goagen
-// --design=goa-adder/design
-// --out=$(GOPATH)/src/goa-adder
+// --design=ping-in/design
+// --out=$(GOPATH)\src\github.com\athagi\src\ping-in
 // --version=v1.3.1
 
 package app
@@ -56,4 +56,31 @@ func MountOperandsController(service *goa.Service, ctrl OperandsController) {
 	}
 	service.Mux.Handle("GET", "/add/:left/:right", ctrl.MuxHandler("add", h, nil))
 	service.LogInfo("mount", "ctrl", "Operands", "action", "Add", "route", "GET /add/:left/:right")
+}
+
+// TestController is the controller interface for the Test actions.
+type TestController interface {
+	goa.Muxer
+	Add(*AddTestContext) error
+}
+
+// MountTestController "mounts" a Test resource controller on the given service.
+func MountTestController(service *goa.Service, ctrl TestController) {
+	initService(service)
+	var h goa.Handler
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewAddTestContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.Add(rctx)
+	}
+	service.Mux.Handle("GET", "/test/", ctrl.MuxHandler("add", h, nil))
+	service.LogInfo("mount", "ctrl", "Test", "action", "Add", "route", "GET /test/")
 }

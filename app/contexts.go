@@ -4,8 +4,8 @@
 //
 // Command:
 // $ goagen
-// --design=goa-adder/design
-// --out=$(GOPATH)/src/goa-adder
+// --design=ping-in/design
+// --out=$(GOPATH)\src\github.com\athagi\src\ping-in
 // --version=v1.3.1
 
 package app
@@ -58,6 +58,35 @@ func NewAddOperandsContext(ctx context.Context, r *http.Request, service *goa.Se
 
 // OK sends a HTTP response with status code 200.
 func (ctx *AddOperandsContext) OK(resp []byte) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "text/plain")
+	}
+	ctx.ResponseData.WriteHeader(200)
+	_, err := ctx.ResponseData.Write(resp)
+	return err
+}
+
+// AddTestContext provides the test add action context.
+type AddTestContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+}
+
+// NewAddTestContext parses the incoming request URL and body, performs validations and creates the
+// context used by the test controller add action.
+func NewAddTestContext(ctx context.Context, r *http.Request, service *goa.Service) (*AddTestContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := AddTestContext{Context: ctx, ResponseData: resp, RequestData: req}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *AddTestContext) OK(resp []byte) error {
 	if ctx.ResponseData.Header().Get("Content-Type") == "" {
 		ctx.ResponseData.Header().Set("Content-Type", "text/plain")
 	}
